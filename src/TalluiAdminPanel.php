@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace VendorName\Skeleton;
+namespace Usetall\TalluiAdminPanel;
 
-final class Skeleton
+final class TalluiAdminPanel
 {
     /** @var array<mixed> */
     protected static $styles = [];

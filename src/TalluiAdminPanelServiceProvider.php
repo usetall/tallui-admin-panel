@@ -2,27 +2,38 @@
 
 declare(strict_types=1);
 
-namespace VendorName\Skeleton;
+namespace Usetall\TalluiAdminPanel;
 
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Illuminate\View\Compilers\BladeCompiler;
 use Livewire\Livewire;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use VendorName\Skeleton\Commands\SkeletonCommand;
+use Usetall\TalluiAdminPanel\Commands\TalluiAdminPanelCommand;
+use Usetall\TalluiAdminPanel\Http\Controllers\AdminPanelController;
 
-class SkeletonServiceProvider extends PackageServiceProvider
+class TalluiAdminPanelServiceProvider extends PackageServiceProvider
 {
     public function configurePackage(Package $package): void
     {
         $package
-            ->name('skeleton')
+            ->name('tallui-admin-panel')
             ->hasConfigFile()
             ->hasViews()
             ->hasTranslations()
-            ->hasMigration('create_skeleton_table')
-            ->hasCommand(SkeletonCommand::class);
+            ->hasMigration('create_tallui-admin-panel_table')
+            ->hasCommand(TalluiAdminPanelCommand::class);
+    }
+
+    public function packageRegistered(): void
+    {
+        Route::macro('tui', function (string $baseUrl = 'tui') {
+            Route::prefix($baseUrl)->group(function () {
+                Route::get('/', [AdminPanelController::class, 'index']);
+            });
+        });
     }
 
     public function boot(): void
@@ -37,16 +48,16 @@ class SkeletonServiceProvider extends PackageServiceProvider
 
     private function bootResources(): void
     {
-        $this->loadViewsFrom(__DIR__.'/../resources/views', ':builder');
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'tallui-admin-panel');
     }
 
     private function bootBladeComponents(): void
     {
         $this->callAfterResolving(BladeCompiler::class, function (BladeCompiler $blade) {
-            $prefix = config(':builder.prefix', '');
-            $assets = config(':builder.assets', []);
+            $prefix = config('tallui-admin-panel.prefix', '');
+            $assets = config('tallui-admin-panel.assets', []);
 
-            foreach (config(':builder.components', []) as $alias => $component) {
+            foreach (config('tallui-admin-panel.components', []) as $alias => $component) {
                 $blade->component($component, $alias, $prefix);
 
                 $this->registerAssets($component, $assets);
@@ -60,10 +71,10 @@ class SkeletonServiceProvider extends PackageServiceProvider
             return;
         }
 
-        $prefix = config(':builder.prefix', '');
-        $assets = config(':builder.assets', []);
+        $prefix = config('tallui-admin-panel.prefix', '');
+        $assets = config('tallui-admin-panel.assets', []);
 
-        foreach (config(':builder.livewire', []) as $alias => $component) {
+        foreach (config('tallui-admin-panel.livewire', []) as $alias => $component) {
             $alias = $prefix ? "$prefix-$alias" : $alias;
 
             Livewire::component($alias, $component);
@@ -81,25 +92,25 @@ class SkeletonServiceProvider extends PackageServiceProvider
             collect($files)->filter(function (string $file) {
                 return Str::endsWith($file, '.css');
             })->each(function (string $style) {
-                Skeleton::addStyle($style);
+                TalluiAdminPanel::addStyle($style);
             });
 
             collect($files)->filter(function (string $file) {
                 return Str::endsWith($file, '.js');
             })->each(function (string $script) {
-                Skeleton::addScript($script);
+                TalluiAdminPanel::addScript($script);
             });
         }
     }
 
     private function bootDirectives(): void
     {
-        Blade::directive(':BuilderStyles', function (string $expression) {
-            return "<?php echo VendorName\\Skeleton\\Skeleton::outputStyles($expression); ?>";
+        Blade::directive('TalluiAdminPanelStyles', function (string $expression) {
+            return "<?php echo Usetall\\TalluiAdminPanel\\TalluiAdminPanel::outputStyles($expression); ?>";
         });
 
-        Blade::directive(':BuilderScripts', function (string $expression) {
-            return "<?php echo VendorName\\Skeleton\\Skeleton::outputScripts($expression); ?>";
+        Blade::directive('TalluiAdminPanelScripts', function (string $expression) {
+            return "<?php echo Usetall\\TalluiAdminPanel\\TalluiAdminPanel::outputScripts($expression); ?>";
         });
     }
 }

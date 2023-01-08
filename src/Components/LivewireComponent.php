@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace VendorName\Skeleton\Components;
+namespace Usetall\TalluiAdminPanel\Components;
 
 use Livewire\Component;
 

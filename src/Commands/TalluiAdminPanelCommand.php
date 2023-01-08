@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace Usetall\TalluiAdminPanel\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class TalluiAdminPanelCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'tallui-admin-panel';
 
     public $description = 'My command';
 
